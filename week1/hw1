@@ -1,0 +1,79 @@
+#lang racket
+
+(define (product-digits n)
+  (if (<= n 10)
+      n
+      (* (remainder n 10) (product-digits (quotient n 10) ))
+      ))
+#lang racket
+(define (square a)
+  (* a a)
+  )
+(define (circle? circle-x circle-y radius point-x point-y)
+  (<= (+ (square (- point-x circle-y)) (square (- point-y circle-y))) (square radius))
+  )
+#lang racket
+
+(define (square a) (* a a))
+(define (square2 a) ( square (square a)))
+(define (area a b c) (/  (sqrt (- (* 2 (+  (square (* a b)) (square (* a c)) (square(* b c))))  (+ (square2 a) (square2 b) (square2 c))))4))
+#lang racket
+(provide isPrime?)
+(define (divisors? a b)
+  (if (or (= (abs b) 1) (= (abs a) 1))
+      #f
+      (if (= (remainder (abs a) (abs b)) 0)
+          #t
+          (divisors? (abs a) (- (abs b) 1))
+      )
+  )
+ )
+(define (isPrime? n)
+  (and (or (> (abs n) 1) (< (abs n) 1)) (not (divisors? (abs n) (- (abs n) 1))))
+  )
+#lang racket
+(define (iscubicwith? a n b)
+  (if (> b n)
+      #f
+      (if (= (+ (* a a a) (* b b b)) n)
+          #t
+          (iscubicwith? a n (+ b 1))
+          )))
+(define (iscubic? a n b)
+  (if (> a n)
+      #f
+      (if (iscubicwith? a n 1)
+          #t
+          (iscubic? (+ a 1) n b)
+          
+          )))
+(define (cube-sums? n)
+  (iscubic? 1 n 1)
+  )
+#lang racket
+(define (iscubicwith? a n b)
+  (if (> b n)
+      #f
+      (if (= (+ (* a a a) (* b b b)) n)
+          #t
+          (iscubicwith? a n (+ b 1))
+          )))
+(define (iscubic? a n b)
+  (if (> a n)
+      #f
+      (if (iscubicwith? a n 1)
+          #t
+          (iscubic? (+ a 1) n b)
+          
+          )))
+(define (cube-sums? n)
+  (iscubic? 1 n 1)
+  )
+(define (count-cube-sums from to)
+  (if (> from to)
+      0
+      (if (cube-sums? from)
+          (+ 1 (count-cube-sums (+ 1 from) to))
+          (+ 0 (count-cube-sums (+ 1 from) to))
+          )))
+  
