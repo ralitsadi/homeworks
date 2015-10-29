@@ -1,0 +1,97 @@
+#lang racket
+
+(define (series a b n)
+  (define (series-help a b counter result)
+    (if (= counter n) result
+        ( series-help b result (+ counter 1) (+ result b))
+        ))
+  (series-help a b 3 (+ a b))
+  )
+  
+(define (fibonacci n)
+  (if (or (= n 1) (= n 2))
+     1
+     (series 1 1 n)
+  )
+  )
+(define (lucas n)
+  (cond
+    [(= n 1) 2]
+    [(= n 2) 1]
+    [else (series 2 1 n)]
+  )
+  )
+(define (summed-number n)
+  (+ (lucas n) (fibonacci n))
+  )
+(define (nth-lucas-sum n)
+  (define (nth-lucas-sum-help result counter)
+    (if (= counter n) (+ result (lucas counter))
+        (nth-lucas-sum-help  (+ result (lucas counter))  (+ 1 counter)))
+        
+    )
+  (nth-lucas-sum-help 0 1)
+  )
+(define (nth-fibonacci-sum n)
+  (define (nth-fibonacci-sum-help result counter)
+    (if (= counter n) (+ result (fibonacci counter))
+        (nth-fibonacci-sum-help  (+ result (fibonacci counter))  (+ 1 counter)))
+        
+    )
+  (nth-fibonacci-sum-help 0 1)
+  )
+
+(define (luc-fib-diff n)
+  (- (lucas n) (fibonacci n))
+  )
+  #lang racket
+(provide
+ string-repeat)
+
+(define (string-repeat a n)
+  (define (string-repeat-help result counter)
+        (if (= n counter)
+            result
+            (string-repeat-help (string-append result a) (+ 1 counter))
+            )
+        )
+    (string-repeat-help a 1)
+  )
+
+(define (fence n)
+  (string-append "{" (string-repeat "-" (round (+ 1 (log n)))) ">" (~a n) "<" (string-repeat "-" (round (+ 1 (log n)))) "}")
+  
+  )
+#lang racket
+(provide to-binary-string)
+(provide string-reverse)
+(provide from-binary-string)
+
+(define (string-reverse str)
+  (define (string-reverse-help counter result)
+    (if (= counter 0)
+        result
+        (string-reverse-help (- counter 1) (string-append result (~a (string-ref str (- counter 1)))))
+        )
+    )
+  (string-reverse-help (- (string-length str) 1) (~a (string-ref str (- (string-length str) 1))))
+  )
+
+(define (to-binary-string n)
+  (define (to-binary-string-help result number)
+    (if (= number 0)
+        (string-reverse result)
+        (to-binary-string-help (string-append result (~a (remainder number 2))) (quotient number 2))
+        )
+    )
+  (to-binary-string-help (~a (remainder n 2)) (quotient n 2))
+  )
+
+(define (from-binary-string binary-str)
+  (define (helper result ex count)
+    (if (= ex 0) result
+        (helper (+ result (* (expt 2 (- ex 1)) (string->number (~a (string-ref binary-str (+ count 1)))))) (- ex 1) (+ count 1))
+        ))
+  (helper 0 (string-length binary-str) -1 )
+  )
+  
