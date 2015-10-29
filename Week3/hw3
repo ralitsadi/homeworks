@@ -1,0 +1,43 @@
+#lang racket
+(require "fence.rkt")
+
+(define (nth-beast-number n)
+  (string-repeat "666" n)
+  )
+#lang racket
+(require "binary.rkt")
+
+(define (sum-digits n)
+  (if (< n 10)
+      n
+      (+ (remainder n 10) (sum-digits (quotient n 10) ))
+      ))
+
+(define (odd? n)
+  (= (remainder n 2) 1)
+  )
+
+(define (next-hack n)
+  (define (odd-number1? n)
+    (odd? (sum-digits n)))
+  (define (next-hack-help c)
+    (if (and (equal? (to-binary-string c) (string-reverse (to-binary-string c)))
+             (odd-number1? (string->number (to-binary-string c))))
+        c
+        (next-hack-help (+ c 1))
+        )
+    )
+  (next-hack-help (+ 1 n))
+  )
+#lang racket
+(require "binary.rkt")
+(define (p-score n)
+  (define (p-score-iter result n)
+    (if (= n (string->number (string-reverse (number->string n))))
+      result
+      (p-score-iter (+ 1 result) (+ n (string->number (string-reverse (number->string n)))) )
+      )
+    )
+  (p-score-iter 1 n)
+  )
+  
