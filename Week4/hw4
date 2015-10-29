@@ -1,0 +1,45 @@
+#lang racket
+(require "hw1.task4.rkt")
+
+(define (square x)
+  (* x x))
+(define (even? x)
+  (= (remainder x 2) 0)
+  )
+
+
+(define (f p g h)
+  (lambda (x) (and (p (g x)) (p (h x))))
+  )
+(define (add1 x)
+  (+ 1 x))
+#lang racket
+(define (fst pair)
+  (car pair))
+
+(define (snd pair)
+  (cdr pair))
+(define (gcd a b)
+  (define (gcd-iter a b)
+    (if (= 0 (remainder a b))
+           b
+           (gcd-iter b (remainder a b)))
+    )
+  (cond
+    [(> (abs a) (abs b)) (gcd-iter (abs a) (abs b))]
+    [(< (abs a) (abs b)) (gcd-iter (abs b) (abs a))]
+    [else (abs a)]
+    ))
+
+(define (createFrac a b)
+  (if (= a 0)
+      0
+      (cons (/ a (gcd a b)) (/ b (gcd a b)))))
+(define (add-frac frac1 frac2)
+  (createFrac (+ (* (fst frac1) (snd frac2)) (* (fst frac2) (snd frac1) )) (* (snd frac1) (snd frac2))))
+(define (substract-frac frac1 frac2)
+  (createFrac (- (* (fst frac1) (snd frac2)) (* (fst frac2) (snd frac1) )) (* (snd frac1) (snd frac2))))
+(define (mult-frac frac1 frac2)
+  (createFrac (* (fst frac1) (fst frac2)) (* (snd frac2) (snd frac1))))
+(define (div-frac frac1 frac2)
+  (createFrac (* (fst frac1) (snd frac2)) (* (snd frac1) (fst frac2))))
