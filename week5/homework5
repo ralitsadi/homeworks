@@ -1,0 +1,100 @@
+#lang racket
+(define (sum2 numbers )
+  (define (sum2-iter numbers result)
+    (cond
+      [(empty? numbers) result]
+      [else (sum2-iter (rest numbers) (+ result (first numbers)))]
+      )
+    
+    )
+  (sum2-iter numbers 0)
+  )
+(define (member2? x items)
+  (cond
+   [(empty? items) #f]
+   [(equal? x (first items)) #t]
+   [else (member2? x (rest items))]
+   ))
+
+(define (length2 items)
+  (sum2 (map (lambda (x) 1) items))
+  )
+(define (list-ref2 items n)
+  (cond
+    [(zero? n) (first items)]
+    [else (list-ref2 (rest items) (- n 1))]
+    ))
+(define (range2 a b)
+  (cond
+    [(> a b) (list)]
+    [else (cons a (range2 (+ a 1) b))]
+    )
+  )
+(define (build-list2 n f)
+  (define (build-list2-help a f)
+    (cond
+      [(> a n) (list)]
+      [else (cons (f a) (build-list2-help (+ a 1) f ))]
+      )
+    )
+ (build-list2-help 1 f)
+  )
+(define (append2 l1 l2)
+  (cond
+    [(empty? l1) l2]
+    [else (cons (first l1) (append2 (rest l1) l2))]
+    ))
+(define (reverse2 items)
+  (define (reverse2-iter result items)
+    (cond
+      [(empty? items) result]
+      [else (reverse2-iter (cons (first items) result) (rest items))]
+      )
+    )
+ ( reverse2-iter (cons (first items)(list)) (rest items)))
+
+(define (take2 n items)
+  (cond
+    [(> n (length2 items)) items]
+    [(= n 0) (list)]
+    [else (cons (first items) (take2 (- n 1) (rest items)))]
+    )
+  )
+(define (drop2 n items)
+  (cond
+    [(> n (length2 items)) (list)]
+    [(empty? items) (list)]
+    [(>= 0 n) (cons (first items) (drop2 (- n 1) (rest items)))]
+    [else (drop2 (- n 1) (rest items))]
+    
+    ))
+(define (take-while p items)
+  (cond
+    
+    [(empty? items) (list)]
+    [ (p (first items)) (cons (first items) (take-while p (rest items)))]
+    [else (take-while p (rest items))]
+    )
+  )
+(define (drop-while p items)
+  (cond
+    [(empty? items) (list)]
+    [ (p (first items)) (drop-while p (rest items))]
+    [else (cons (first items) (take-while p (rest items)))]
+    ))
+(define (number->list n)
+  (define (number->list-iter result n)
+    (cond
+      [(< n 10) (cons n result)]
+      [else (number->list-iter (cons (remainder n 10) result) (quotient n 10))]
+      ))
+  (number->list-iter (list) n))
+(define (list->number l)
+  (define (list->number-iter result l count)
+    (cond
+      [(< count 1) (+ result (first l))]
+      [else (list->number-iter (+ result (* (first l) (expt 10 count))) (rest l) (- count 1))]
+      ))
+  (list->number-iter 0 l (- (length l) 1))
+  )
+  
