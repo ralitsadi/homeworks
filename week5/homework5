@@ -70,18 +70,16 @@
     ))
 (define (take-while p items)
   (cond
-    
     [(empty? items) (list)]
-    [ (p (first items)) (cons (first items) (take-while p (rest items)))]
-    [else (take-while p (rest items))]
-    )
+    [(p (first items)) (cons (first items) (take-while p (rest items)))]
+    [else (list)])
   )
 (define (drop-while p items)
   (cond
     [(empty? items) (list)]
-    [ (p (first items)) (drop-while p (rest items))]
-    [else (cons (first items) (take-while p (rest items)))]
-    ))
+    [(p (first items))(drop-while p (rest items))]
+    [else items])
+  )
 (define (number->list n)
   (define (number->list-iter result n)
     (cond
