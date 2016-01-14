@@ -1,0 +1,52 @@
+
+count :: Eq a => a -> [a] -> Int
+count x [] = 0
+count x (y:ys)
+ |x==y = 1 + count x ys
+ |otherwise = count x ys
+
+matchLengths :: [[Int]] -> [[Int]] -> Bool
+matchLengths [] [] = True
+matchLengths [x1,y1] [x2,y2] = ((length x1) - (length x2)) == ((length y1) - (length y2))
+matchLengths (x1:y1:z1) (x2:y2:z2) = ((length x1) - (length x2)) == ((length y1) - (length y2)) && (matchLengths (y1:z1) (y2:z2))
+
+trim :: String -> String
+trim ss = reverse ( dropWhile (\s -> s==' ') (reverse (dropWhile (\s -> s==' ') ss))) 
+ 
+lengthEncode :: String -> String
+lengthEncode [] = []
+lengthEncode (s:ss)
+ |length (takeWhile (\k -> k==s) (s:ss)) == 1 =  s : lengthEncode (dropWhile (\k -> k==s) ss)
+ |otherwise = show (length (takeWhile (\k -> k==s) (s:ss)) ) ++ s : lengthEncode (dropWhile (\k -> k==s) ss)
+
+lengthDecode :: String -> String
+lengthDecode [] = []
+lengthDecode (s:ss) 
+ |isDigit s = (repeat (toDigit (takeWhile isDigit (s:ss) ) ) (dropWhile isDigit (s:ss)) ) ++ lengthDecode (dropWhile isDigit ss)
+ |otherwise = s : lengthDecode ss
+ where 
+  repeat :: Int -> String -> String
+  repeat _ [] = []
+  repeat 1 _ = []
+  repeat i (x:xs) = x : (repeat (i - 1) (x:xs))
+  isDigit :: Char ->Bool
+  isDigit k = (k >= '0' && k <= '9')
+  toDigit:: String -> Int
+  toDigit s = read s::Int
+  
+quickSort :: Ord a => [a] -> [a]
+quickSort [] = []
+quickSort (x:xs) = quickSort [y | y <- xs, y <= x ]++ [x] ++ quickSort[ y| y<- xs, y > x]
+
+main :: IO()
+main = do
+ putStrLn("Count: ")
+ print(count 3 [4,3,3,6,3])
+ print(count 5 [2,0,0,2])
+ print(matchLengths [[4,6,5],[2,3],[66,4,7]] [[4,6,5],[2,3],[66,4,7]])
+ print(matchLengths [[4,6,5],[2],[66,4,7]] [[4,6,5],[2,3],[66,4,7]])
+ print(matchLengths [ [1..9], [10..19] ] [ [1,2,3], [1,2,3,4] ])
+ print(trim "   Ice cream is cool!    ")
+ print(lengthEncode "aaaaannnnmmmere")
+ print(lengthDecode "10a4n3mere")
+ print(quickSort [3,5,2,4,5,2,1])
