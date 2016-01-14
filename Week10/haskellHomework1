@@ -1,0 +1,81 @@
+factorial 0 = 1
+factorial n = n * factorial(n-1)
+
+
+isPrime :: Int -> Bool
+isPrime n
+    | n <= 1 = False
+    | otherwise = isPrime' 2 n
+        where
+            isPrime' current n
+                | current == n = True
+                | mod n current == 0 = False
+                | otherwise = isPrime' (current + 1) n
+
+truncatablePrime:: Int -> Bool
+truncatablePrime n 
+    | n==1 = False
+    |otherwise = arePrime n
+         where
+	     arePrime n
+		| n == 0 = True
+		| isPrime n == False = False
+		| otherwise = arePrime(div n 10)
+     
+
+
+
+
+
+
+containsDigits :: Int->Int->Bool
+containsDigits n x  
+   |x < 10 = containsDigit n x
+   |otherwise = containsDigit n (mod x 10) && containsDigits n (div x 10)
+      where
+         containsDigit n x
+	    | n == 0 = False
+	    | (mod n 10) == x = True
+	    | otherwise  = containsDigit (div n 10) x
+	   
+ 
+
+
+productOfDigits:: Int->Int
+productOfDigits n 
+    | n<10 = n
+    |otherwise = (mod n 10) * productOfDigits (div n 10)
+
+sumDivisors :: Int -> Int
+sumDivisors n
+    | n <= 1 = 1
+    | otherwise = sumDivisors' 1 n
+        where
+            sumDivisors' current n
+                | current == n = 0
+                | mod n current == 0 = current + sumDivisors' (current + 1) n
+                | otherwise = sumDivisors' (current + 1) n
+
+interestingNumber::Int->Bool
+interestingNumber n = sumDivisors(sumDivisors n)== n
+ 
+quadrant::Double->Double->Int
+quadrant x y 
+    |x == 0 && y==0 = 0
+    |x*y > 0 && x<0 = 3
+    |x*y > 0 && x>0 = 1
+    |x<0 = 2
+    |otherwise = 4
+ 
+main :: IO()
+main = do
+ print (factorial 5)
+ print (truncatablePrime 47)
+ print (div 456 10)
+ print (productOfDigits 456)
+ print (containsDigits 345 39)
+ print (sumDivisors 4)
+ print (interestingNumber 220)
+ print (interestingNumber 69)
+ print (quadrant (-8.9) 56)
+ 
