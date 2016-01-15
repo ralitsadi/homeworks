@@ -1,0 +1,102 @@
+
+import Data.Char
+import Data.List
+
+data Student = Student String String
+instance Show Student where
+ show (Student name fn) = fn++"::"++name
+instance Eq Student where
+ (==) (Student name1 fn1) (Student name2 fn2) = name1 == name2 && fn1 == fn2
+data Shape = Circle | Triangle | Rectangle
+instance Show Shape where
+ show Circle = "Circle"
+ show Triangle = "Triangle"
+ show Rectangle = "Rectangle"
+instance Eq Shape where
+ (==) Circle Circle = True
+ (==) Triangle Triangle = True
+ (==) Rectangle Rectangle = True
+ (==) _ _ = False
+isCircle :: Shape -> Bool
+isCircle shape = Circle == shape 
+isTriangle :: Shape -> Bool
+isTriangle shape = Triangle == shape
+isRectangle :: Shape -> Bool
+isRectangle shape = Rectangle == shape
+
+data List = Empty | Cons Int List deriving Show
+length'::List->Int
+length' Empty = 0
+length' (Cons x xs) = 1 + length' xs
+
+data List' a = Empty' | Cons' a (List' a) deriving Show
+
+type Product = (String, Double)
+getName::Product->String
+getName (s,_) = s
+getPrice::Product->Double
+getPrice (_,p) = p
+discount :: Double -> [Product] -> [Product]
+discount percent tup = [(s, n - n*percent) | (s, n)<-tup]
+
+data Vector2D = Vector2D Double Double
+instance Show Vector2D where
+ show (Vector2D d p) = "(" ++ show d ++","++ show p ++ ")"
+instance Eq Vector2D where
+ (==) (Vector2D d1 p1) (Vector2D d2 p2) = d1 == d2 && p1 == p2
+ 
+addVectors :: Vector2D -> Vector2D -> Vector2D
+addVectors (Vector2D d1 p1) (Vector2D d2 p2) = Vector2D (d1+d2) (p1+p2)
+vectorLength :: Vector2D -> Double
+vectorLength (Vector2D d p) = sqrt( d*d + p*p )
+
+data Book = Paper String Int | Online String Int Int
+instance Show Book where
+ show (Paper s i) = "Book name: "++ s ++ " pages: " ++ show i
+ show (Online s i p) = "Online book name: "++ s ++ " pages: " ++ show i ++ " price: "++ show p
+ 
+instance Eq Book where
+ (==) (Paper s1 i1) (Paper s2 i2) = (s1==s2)&&(i1==i2)
+ (==) (Online s1 i1 p1) (Online s2 i2 p2) = (s1==s2)&&(i1==i2)&&(p1==p2)
+ (==) _ _ = False
+
+type Library = [Book]
+
+getPages :: Book -> Int
+getPages (Paper s i) = i
+getPages (Online s i p) = i 
+
+getTotalPages :: Library -> Int
+getTotalPages [] = 0
+getTotalPages (x:xs) = (getPages x) + getTotalPages xs
+
+getOnlineCount :: Library -> Int
+getOnlineCount [] = 0
+getOnlineCount (Online name pages price :xs) = 1 + getOnlineCount xs
+getOnlineCount (Paper name pages : xs) = getOnlineCount xs
+
+getPaperCount :: Library -> Int
+getPaperCount [] = 0
+getPaperCount (Online name pages price :xs) = getPaperCount xs
+getPaperCount (Paper name pages : xs) = 1 + getPaperCount xs
+
+getBooksLike :: String -> Library -> Library
+getBooksLike _ [] = []
+getBooksLike name (Paper n i : xs)
+ |isInfixOf (map toLower name) (map toLower n)  = (Paper n i) : getBooksLike name xs
+ |otherwise = getBooksLike name xs
+getBooksLike name (Online n i p : xs)
+ |isInfixOf (map toLower name) (map toLower n)  = (Online n i p) : getBooksLike name xs
+ |otherwise = getBooksLike name xs
+
+
+main:: IO()
+main = do
+ print( Paper "Little Red Ridding Hood" 34 )
+ print( Online "Health" 102 6)
+ print( getPages (Paper "Little Red Ridding Hood" 34 ))
+ print( getPages (Online "Health" 102 6 ))
+ print( getTotalPages [ Paper "a" 234, Paper "b" 3, Online "c" 300 6])
+ print( getOnlineCount [ Paper "a" 234, Paper "b" 3, Online "c" 300 6])
+ print( getPaperCount [ Paper "a" 234, Paper "b" 3, Online "c" 300 6])
+ print( getBooksLike "aZ" [ Paper "zashto az a" 234, Paper "a" 3, Online "a" 300 6])
