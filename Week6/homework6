@@ -1,0 +1,7 @@
+
+(define (group l)
+  (cond
+    [(empty? l) (list)]
+    [ else (cons (append (list (first l))(take-while (lambda ( x) (equal? x (first l))) (rest l))) (group (drop-while (lambda (x) (equal? x (first l))) (rest l)) ))]
+    )
+  )
