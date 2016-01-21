@@ -1,0 +1,106 @@
+#lang racket
+
+(define (atom? x)
+  (and (not (list? x))
+       (not (vector? x))))
+(define (prime? x)
+  (cond
+    [(= x 1) #f]
+    [else
+      (define (prime-iter a x)
+         (cond
+           [(and (not (= 1 x)) (= a x)) #t]
+           [(= 0 (remainder x a)) #f]
+           [else (prime-iter (+ 1 a) x)]))
+     (prime-iter 2 x)
+     ]
+  )
+  )
+
+(define (truncatable-prime? x)
+  (cond
+           [(< x 10) (prime? x)]
+           [else (and  (prime? x) (truncatable-prime? (quotient x 10)))]))
+
+(define (where list-elements list-predicates)
+  (define (isAll x list-predicates)
+    (cond
+      [(empty? list-predicates) #t]
+      [(not ( (first list-predicates) x)) #f]
+      [else (isAll x (rest list-predicates))]
+      ))
+  (cond
+    [(empty? list-elements) (list)]
+    [(isAll (first list-elements) list-predicates) (cons (first list-elements) (where (rest list-elements) list-predicates))]
+    [else (where (rest list-elements) list-predicates)]
+    ))
+
+(define (positionx x items)
+  (define (iter c items)
+    (cond 
+      [(empty? items) -1]
+      [ (equal? x (first items)) c]
+      [else (iter (+ c 1) (rest items))]
+      )
+    )
+  (iter 0 items)
+  )
+(define (replace index x items)
+  (cond
+    [(empty? items) (list)]
+    [(= index 0) (cons x (rest items))]
+    [else (cons (first items) (replace (- index 1) x (rest items)))]
+    )
+  )
+
+(define (replacemore index x items)
+  (cond
+    [(empty? items) (list)]
+    [else (cons (replace index x (first items)) (replacemore index x (rest items)))]
+    ))
+       
+(define (zero matrix)
+ (define (iter m matrix)
+  (cond
+    [(empty? m) matrix]
+    [(not (= -1 (positionx 0 (first m)))) (iter (rest m) (replacemore (positionx 0 (first m)) 0  matrix))]
+    [ else (iter (rest m) matrix)]
+    )
+  )
+  (iter matrix matrix))
+
+
+(define (sumrd matrix)
+  (cond
+    [(empty? matrix) 0]
+    [(number? (first matrix)) (+ (first matrix) (sumrd (rest matrix)))]
+    [else (+ (sumrd (first matrix)) (sumrd (rest matrix)))]
+    )
+  )
+(define (eqsumrd? matrix)
+  (define (iter matrix result)
+          (cond
+            [(empty? matrix) result]
+            [(equal? (foldl + 0 (first matrix)) (iter (rest matrix) (foldl + 0 (first matrix)))) (foldl + 0 (first matrix)) ]
+            [else #f]
+            )
+    )
+  (iter matrix 0)
+  )
+(define (eqsumkol? matrix)
+  (define (iter matrix result)
+    (cond
+      [(empty? matrix) result]
+      [(equal? (foldl + 0 (map (lambda (x) (first x))  matrix)) (iter (rest matrix) (foldl + 0 (map (lambda (x) (first x)) (first matrix))))) (foldl + 0 (map (lambda (x) (first x)) (first matrix)))]
+      [else #f]
+      )
+    )
+  (iter matrix 0)
+  )
+            
+;(define (magiq-square? matrix)
+ ; (equal? (sumrd matrix) (sum st) (sum gd)  (sum vd)))
+  
+
+
+
