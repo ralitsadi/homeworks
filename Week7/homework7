@@ -1,0 +1,129 @@
+#lang racket
+
+(define (atom? x)
+  (not (or
+        (pair? x)
+        (null? x)
+        (vector? x))))
+(define (count-atoms l)
+  (cond
+    [(null? l) 0]
+    [(atom? (first l)) (+ 1 (count-atoms (rest l)))]
+    [else (+ (count-atoms (first l)) (count-atoms (rest l)))]))
+
+(define (make-tree node left right)
+  (list node left right))
+
+(define (make-leaf node)
+  (make-tree node '() '()))
+
+(define (root tree)
+  (first tree))
+
+(define (left tree)
+  (first (rest tree)))
+
+(define (right tree)
+  (first (rest (rest tree))))
+
+(define d (list 1 (list 2 (list 3 '())) (list 4 (list 5 '()))))
+
+(define (height tree)
+  (cond
+    [(empty? tree) 0]
+    [else (+ 1 (max (height (left tree)) (height (right tree))))]
+    ))
+
+
+; 1
+(define (tree-level level tree)
+  (cond
+    [(empty? tree) (list)]
+    [(= level 1) (cons (first tree) '()) ]
+    [else (append (tree-level (- level 1) (left tree)) (tree-level (- level 1) (right tree)))]
+  ))
+;2
+(define (tree-levels tree)
+  (define (tree-levels-iter counter tree)
+    (cond
+       [(< (height tree) counter) (list)]
+       [else (cons (tree-level counter tree) (tree-levels-iter (+ counter 1) tree))]
+       ))
+  (tree-levels-iter 1 tree))
+;3
+(define (tree-map f tree)
+  (cond
+    [(empty? tree) (list)]
+    [(make-tree (f (first tree))  (tree-map f (left tree)) (tree-map f (right tree)))]
+    ))
+
+;4
+(define (bst-insert x tree)
+  (cond
+    [ (empty? tree) (make-leaf x)]
+    [(< x (first tree)) (make-tree (first tree) (bst-insert x (left tree)) (right tree))]
+    [else (make-tree (first tree) (left tree) (bst-insert x (right tree)))]
+    ))
+;5
+(define (bst-element? x tree)
+  (cond
+    [(empty? tree) #f]
+    [(equal? (first tree) x) #t]
+    [(< x (first tree)) (bst-element? x (left tree))]
+    [else (bst-element? x (right tree))]
+    ))
+;6
+
+
+   
+(define (is-simple-tree? tree)
+  (and (leaf? (left tree)) (leaf? (right tree))))
+(define (sort-simple-tree tree)
+  (make-tree (root (left tree)) (make-leaf (root tree)) (right tree)))
+
+(define r
+  (make-tree 3 (make-leaf 2) (make-leaf 4)))
+
+;7
+(define (bst? tree)
+  (cond
+    [(atom? tree) tree]
+    [(leaf? tree) #t]
+    [(equal? '() (left tree)) (<= (root tree) (root (right tree)))]
+    [(equal? '() (right tree)) (> (root tree) (root (left tree))) ]
+    [(or (< (root tree) (root (left tree))) (>= (root tree) (root (right tree)))) #f]
+    [else (and (bst? (left tree)) (bst? (right tree)))]
+    ))
+    
+
+(define (leaf? tree)
+  (and (atom? (first tree)) (equal? '() (left tree)) (equal? '() (right tree))))
+
+(define st
+  (make-tree 4
+             (make-tree 2
+                    '()
+                   (make-leaf 3))
+             (make-leaf 1)))
+
+(define t
+  (make-tree 8
+    (make-tree 7
+      (make-leaf 1)
+      (make-leaf 11))
+    (make-leaf 10)))
+
+(define binaryTree
+    (make-tree 8
+               (make-tree 3
+                          (make-leaf 1)
+                          (make-tree 6
+                                     (make-leaf 4)
+                                     (make-leaf 7)))
+               (make-tree 10
+                          '()
+                          (make-tree 14
+                                     (make-leaf 13)
+                                      '()))))
+                          
+                
